@@ -12,6 +12,7 @@ This project solves this by establishing a localized, automated ETL data pipelin
 
 ## ⚙️ The ETL Data Pipeline Workflow
 
+
 ### 1. Database Initialization (Supabase)
 Before data extraction occurred, the database schema and required tables (`fact_order_line`, `dim_products`, `dim_customers`) were pre-created in the Supabase PostgreSQL database to ensure a strict structure for incoming payloads.
 
@@ -19,15 +20,16 @@ Before data extraction occurred, the database schema and required tables (`fact_
 An automated n8n workflow was established on a local host to monitor a dedicated inbox every minute. 
 * **Trigger:** Activates exclusively when an email arrives with the subject **"daily sales"**.
 * **Extraction:** Accesses and downloads the attached CSV files using the Gmail API.
+* ![n8n workflow](images/n8n_workflow.png)
 
 ### 3. Transformation & Ingestion (Supabase)
 Once the files are extracted, Supabase handles the heavy lifting of formatting and ingestion:
 * **Format Conversion:** Converts the raw CSV data into structured JSON format.
 * **Date Standardization:** Standardizes inconsistent date formats across the US and Indian datasets using the expression `.todateformat("dd-mm-yyyy").format("yyyy-mm-dd")`. 
 
-![Date Transformation & Conversion](images/n8n_date_transformation.png)
+![Date Transformation & Conversion](images/dateformat_change_to_standard_iso_format_to_yyyy-mm-dd.png)
 
-### 4. Data Cleaning
+### 4. Data Cleaning and Insertion
 * The transformed data is continuously ingested into the Supabase tables by creating tables with column names same as the email datasheets. 
 Once stored, rigorous data cleaning was performed in the Supabase SQL Editor:
 
